@@ -264,4 +264,10 @@ export const loadGameState = (): any | null => {
     return saved ? JSON.parse(saved) : null;
   }
   return null;
+};
+
+export const clearGameState = () => {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('pokemon-battle-game');
+  }
 }; 

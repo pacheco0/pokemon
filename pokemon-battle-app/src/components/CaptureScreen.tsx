@@ -30,12 +30,19 @@ const CaptureScreen: React.FC<CaptureScreenProps> = ({
         (gameState.lastDefeatedPokemon as any).level || 5
       );
       
-      // Update game state with new Pokemon and reduced pokeballs
+      // Add the captured Pokemon ID to capturedPokemon array if not already there
+      const newCapturedPokemon = [...gameState.capturedPokemon];
+      if (!newCapturedPokemon.includes(gameState.lastDefeatedPokemon.id)) {
+        newCapturedPokemon.push(gameState.lastDefeatedPokemon.id);
+      }
+      
+      // Update game state with new Pokemon, reduced pokeballs, and updated captured list
       updateGameState({
         playerPokemon: capturedPokemon,
         pokeballs: gameState.pokeballs - 1,
         lastDefeatedPokemon: null,
-        enemyPokemon: null
+        enemyPokemon: null,
+        capturedPokemon: newCapturedPokemon
       });
       
       setCaptureComplete(true);

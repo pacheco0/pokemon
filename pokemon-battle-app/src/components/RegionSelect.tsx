@@ -6,9 +6,10 @@ import { REGIONS } from '@/types/pokemon';
 interface RegionSelectProps {
   selectedRegion: 'kanto' | 'johto' | 'hoenn' | 'sinnoh';
   onRegionSelect: (region: 'kanto' | 'johto' | 'hoenn' | 'sinnoh') => void;
+  onBackToHome?: () => void;
 }
 
-const RegionSelect: React.FC<RegionSelectProps> = ({ selectedRegion, onRegionSelect }) => {
+const RegionSelect: React.FC<RegionSelectProps> = ({ selectedRegion, onRegionSelect, onBackToHome }) => {
   const regionImages = {
     kanto: '/images/kanto.svg',
     johto: '/images/johto.svg',
@@ -74,10 +75,19 @@ const RegionSelect: React.FC<RegionSelectProps> = ({ selectedRegion, onRegionSel
         <div className="text-center mt-8">
           <button
             onClick={() => onRegionSelect(selectedRegion)}
-            className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+            className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg mr-4"
           >
             Continue to Starter Selection
           </button>
+          
+          {onBackToHome && (
+            <button
+              onClick={onBackToHome}
+              className="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+            >
+              Back to Home
+            </button>
+          )}
         </div>
       </div>
     </div>

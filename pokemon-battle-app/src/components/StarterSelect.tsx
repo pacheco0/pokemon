@@ -10,13 +10,15 @@ interface StarterSelectProps {
   onStarterSelect: (pokemon: PlayerPokemon) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;
+  onBackToHome?: () => void;
 }
 
 const StarterSelect: React.FC<StarterSelectProps> = ({ 
   selectedRegion, 
   onStarterSelect, 
   loading, 
-  setLoading 
+  setLoading,
+  onBackToHome
 }) => {
   const [starters, setStarters] = useState<Pokemon[]>([]);
   const [selectedStarter, setSelectedStarter] = useState<Pokemon | null>(null);
@@ -167,10 +169,19 @@ const StarterSelect: React.FC<StarterSelectProps> = ({
           <button
             onClick={() => selectedStarter && handleStarterSelect(selectedStarter)}
             disabled={!selectedStarter || loading}
-            className="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none mr-4"
           >
             {selectedStarter ? `Start with ${selectedStarter.name}!` : 'Select a Pokémon'}
           </button>
+          
+          {onBackToHome && (
+            <button
+              onClick={onBackToHome}
+              className="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+            >
+              Back
+            </button>
+          )}
         </div>
       </div>
     </div>

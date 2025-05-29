@@ -68,7 +68,9 @@ export interface GameState {
   wave: number;
   pokeballs: number;
   selectedRegion: 'kanto' | 'johto' | 'hoenn' | 'sinnoh';
-  gamePhase: 'region-select' | 'starter-select' | 'battle' | 'victory' | 'defeat' | 'capture';
+  gamePhase: 'home' | 'pokemon-select' | 'region-select' | 'starter-select' | 'battle' | 'victory' | 'defeat' | 'capture' | 'pokedex';
+  capturedPokemon: number[];
+  chosenStarter: number | null;
 }
 
 export interface EvolutionChain {
