@@ -4,15 +4,16 @@ import React from 'react';
 import { REGIONS } from '@/types/pokemon';
 
 interface RegionSelectProps {
-  selectedRegion: 'kanto' | 'johto' | 'hoenn';
-  onRegionSelect: (region: 'kanto' | 'johto' | 'hoenn') => void;
+  selectedRegion: 'kanto' | 'johto' | 'hoenn' | 'sinnoh';
+  onRegionSelect: (region: 'kanto' | 'johto' | 'hoenn' | 'sinnoh') => void;
 }
 
 const RegionSelect: React.FC<RegionSelectProps> = ({ selectedRegion, onRegionSelect }) => {
   const regionImages = {
-    kanto: '/images/kanto.png',
-    johto: '/images/johto.png',
-    hoenn: '/images/hoenn.png'
+    kanto: '/images/kanto.svg',
+    johto: '/images/johto.svg',
+    hoenn: '/images/hoenn.svg',
+    sinnoh: '/images/sinnoh.svg'
   };
 
   return (
@@ -33,7 +34,7 @@ const RegionSelect: React.FC<RegionSelectProps> = ({ selectedRegion, onRegionSel
                   : 'hover:shadow-lg'
                 }
               `}
-              onClick={() => onRegionSelect(key as 'kanto' | 'johto' | 'hoenn')}
+              onClick={() => onRegionSelect(key as 'kanto' | 'johto' | 'hoenn' | 'sinnoh')}
             >
               <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl p-6 text-center">
                 <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">

@@ -67,7 +67,7 @@ export interface GameState {
   lastDefeatedPokemon: Pokemon | null;
   wave: number;
   pokeballs: number;
-  selectedRegion: 'kanto' | 'johto' | 'hoenn';
+  selectedRegion: 'kanto' | 'johto' | 'hoenn' | 'sinnoh';
   gamePhase: 'region-select' | 'starter-select' | 'battle' | 'victory' | 'defeat' | 'capture';
 }
 
@@ -122,6 +122,14 @@ export const REGIONS: Record<string, Region> = {
       { id: 252, name: 'treecko' },
       { id: 255, name: 'torchic' },
       { id: 258, name: 'mudkip' }
+    ]
+  },
+  sinnoh: {
+    name: 'Sinnoh',
+    starters: [
+      { id: 387, name: 'turtwig' },
+      { id: 390, name: 'chimchar' },
+      { id: 393, name: 'piplup' }
     ]
   }
 }; 

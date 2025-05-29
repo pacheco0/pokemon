@@ -6,7 +6,7 @@ import { pokeAPI } from '@/utils/pokeapi';
 import { createPlayerPokemon } from '@/utils/gameLogic';
 
 interface StarterSelectProps {
-  selectedRegion: 'kanto' | 'johto' | 'hoenn';
+  selectedRegion: 'kanto' | 'johto' | 'hoenn' | 'sinnoh';
   onStarterSelect: (pokemon: PlayerPokemon) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;

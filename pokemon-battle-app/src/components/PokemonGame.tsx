@@ -58,7 +58,7 @@ const PokemonGame: React.FC = () => {
         return (
           <RegionSelect
             selectedRegion={gameState.selectedRegion}
-            onRegionSelect={(region: 'kanto' | 'johto' | 'hoenn') => updateGameState({ selectedRegion: region, gamePhase: 'starter-select' })}
+            onRegionSelect={(region: 'kanto' | 'johto' | 'hoenn' | 'sinnoh') => updateGameState({ selectedRegion: region, gamePhase: 'starter-select' })}
           />
         );
       
