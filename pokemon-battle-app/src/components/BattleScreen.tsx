@@ -28,6 +28,10 @@ const BattleScreen: React.FC<BattleScreenProps> = ({
   const [battleLog, setBattleLog] = useState<string[]>([]);
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [battlePhase, setBattlePhase] = useState<'select-move' | 'animating' | 'battle-end'>('select-move');
+  
+  // Local state for enemy HP to prevent state management issues
+  const [enemyCurrentHp, setEnemyCurrentHp] = useState<number>(0);
+  const [enemyMaxHp, setEnemyMaxHp] = useState<number>(0);
 
   useEffect(() => {
     if (!gameState.enemyPokemon && gameState.playerPokemon) {
@@ -41,7 +45,28 @@ const BattleScreen: React.FC<BattleScreenProps> = ({
     setLoading(true);
     try {
       const enemy = await generateEnemyPokemon(gameState.playerPokemon.level);
-      updateGameState({ enemyPokemon: enemy });
+      
+      // Ensure the enemy has the correct HP structure
+      const enemyWithHp = {
+        ...enemy,
+        currentHp: (enemy as any).currentHp,
+        maxHp: (enemy as any).maxHp,
+        level: (enemy as any).level
+      };
+      
+      // Initialize local HP state
+      const maxHp = (enemy as any).maxHp;
+      const currentHp = (enemy as any).currentHp;
+      setEnemyMaxHp(maxHp);
+      setEnemyCurrentHp(currentHp);
+      
+      console.log('=== GENERATE ENEMY DEBUG ===');
+      console.log('Generated enemy:', enemy.name);
+      console.log('Enemy currentHp:', currentHp);
+      console.log('Enemy maxHp:', maxHp);
+      console.log('Local state initialized - currentHp:', currentHp, 'maxHp:', maxHp);
+      
+      updateGameState({ enemyPokemon: enemyWithHp });
       setBattleLog([`A wild ${enemy.name} appeared!`]);
       
       // Player always goes first at the start of battle
@@ -78,15 +103,29 @@ const BattleScreen: React.FC<BattleScreenProps> = ({
     // Apply damage after a short delay for animation
     setTimeout(() => {
       if (isPlayerAttacking) {
-        // Player attacking enemy
-        const currentEnemyHp = (gameState.enemyPokemon as any).currentHp || defenderStats.hp;
-        const enemyCurrentHp = Math.max(0, currentEnemyHp - damage);
-        const updatedEnemy = { ...gameState.enemyPokemon!, currentHp: enemyCurrentHp };
+        // Player attacking enemy - use local state
+        const newEnemyHp = Math.max(0, enemyCurrentHp - damage);
+        setEnemyCurrentHp(newEnemyHp);
+        
+        // Also update the global state for consistency
+        const updatedEnemy = { 
+          ...gameState.enemyPokemon!, 
+          currentHp: newEnemyHp,
+          maxHp: enemyMaxHp,
+          level: (gameState.enemyPokemon as any).level || 5
+        };
+        
+        console.log('=== PLAYER ATTACK DEBUG ===');
+        console.log('Enemy HP before attack:', enemyCurrentHp);
+        console.log('Damage dealt:', damage);
+        console.log('Enemy HP after attack:', newEnemyHp);
+        console.log('Local state updated to:', newEnemyHp);
+        
         updateGameState({ enemyPokemon: updatedEnemy });
         
         setBattleLog(prev => [...prev, `It dealt ${damage} damage!`]);
         
-        if (enemyCurrentHp <= 0) {
+        if (newEnemyHp <= 0) {
           // Enemy defeated
           setTimeout(() => handleVictory(), 1000);
         } else {
@@ -101,6 +140,11 @@ const BattleScreen: React.FC<BattleScreenProps> = ({
         const playerCurrentHp = Math.max(0, gameState.playerPokemon!.currentHp - damage);
         const updatedPlayer = { ...gameState.playerPokemon!, currentHp: playerCurrentHp };
         updateGameState({ playerPokemon: updatedPlayer });
+        
+        console.log('=== ENEMY ATTACK DEBUG ===');
+        console.log('Player HP before attack:', gameState.playerPokemon!.currentHp);
+        console.log('Damage dealt:', damage);
+        console.log('Player HP after attack:', playerCurrentHp);
         
         setBattleLog(prev => [...prev, `It dealt ${damage} damage!`]);
         
@@ -209,9 +253,28 @@ const BattleScreen: React.FC<BattleScreenProps> = ({
   };
 
   const handleDefeat = () => {
-    setBattlePhase('battle-end');
-    setBattleLog(prev => [...prev, `${gameState.playerPokemon!.name} fainted!`]);
-    updateGameState({ gamePhase: 'defeat' });
+    console.log('=== DEFEAT DEBUG ===');
+    console.log('Player defeated naturally, preserving captured Pokemon:', gameState.capturedPokemon);
+    
+    // When defeated, preserve all captured Pokemon
+    updateGameState({ 
+      gamePhase: 'defeat',
+      // Explicitly preserve captured Pokemon list
+      capturedPokemon: [...gameState.capturedPokemon]
+    });
+  };
+
+  const handleSurrender = () => {
+    console.log('=== SURRENDER DEBUG ===');
+    console.log('Player surrendering, preserving captured Pokemon:', gameState.capturedPokemon);
+    console.log('Current player Pokemon:', gameState.playerPokemon?.name);
+    
+    // When surrendering, preserve all captured Pokemon and current game state
+    updateGameState({ 
+      gamePhase: 'defeat',
+      // Explicitly preserve captured Pokemon list
+      capturedPokemon: [...gameState.capturedPokemon]
+    });
   };
 
   const getTypeColor = (type: string) => {
@@ -257,7 +320,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-2xl relative">
         {/* Surrender Button */}
         <button
-          onClick={() => updateGameState({ gamePhase: 'defeat' })}
+          onClick={handleSurrender}
           className="absolute top-4 left-4 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center space-x-1"
         >
           <span>🏳️</span>
@@ -317,11 +380,11 @@ const BattleScreen: React.FC<BattleScreenProps> = ({
             <div className="bg-gray-200 rounded-full h-4 mb-2">
               <div
                 className="bg-gradient-to-r from-red-400 to-red-600 h-4 rounded-full transition-all duration-500"
-                style={{ width: `${((gameState.enemyPokemon as any).currentHp || enemyStats.hp) / enemyStats.hp * 100}%` }}
+                style={{ width: `${(enemyCurrentHp / enemyMaxHp) * 100}%` }}
               ></div>
             </div>
             <p className="text-sm text-gray-600">
-              HP: {(gameState.enemyPokemon as any).currentHp || enemyStats.hp}/{enemyStats.hp}
+              HP: {enemyCurrentHp}/{enemyMaxHp}
             </p>
             <p className="text-xs text-gray-500">Level {(gameState.enemyPokemon as any).level || 5}</p>
           </div>

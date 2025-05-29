@@ -22,6 +22,10 @@ const CaptureScreen: React.FC<CaptureScreenProps> = ({
   const handleCapture = async () => {
     if (!gameState.lastDefeatedPokemon || gameState.pokeballs <= 0) return;
     
+    console.log('=== CAPTURE DEBUG ===');
+    console.log('Capturing Pokemon:', gameState.lastDefeatedPokemon.name, 'ID:', gameState.lastDefeatedPokemon.id);
+    console.log('Current captured Pokemon:', gameState.capturedPokemon);
+    
     setLoading(true);
     try {
       // Create player Pokemon from captured defeated Pokemon
@@ -34,7 +38,12 @@ const CaptureScreen: React.FC<CaptureScreenProps> = ({
       const newCapturedPokemon = [...gameState.capturedPokemon];
       if (!newCapturedPokemon.includes(gameState.lastDefeatedPokemon.id)) {
         newCapturedPokemon.push(gameState.lastDefeatedPokemon.id);
+        console.log('Added Pokemon ID to captured list:', gameState.lastDefeatedPokemon.id);
+      } else {
+        console.log('Pokemon was already in captured list');
       }
+      
+      console.log('New captured Pokemon list:', newCapturedPokemon);
       
       // Update game state with new Pokemon, reduced pokeballs, and updated captured list
       updateGameState({
@@ -44,6 +53,8 @@ const CaptureScreen: React.FC<CaptureScreenProps> = ({
         enemyPokemon: null,
         capturedPokemon: newCapturedPokemon
       });
+      
+      console.log('Game state updated with captured Pokemon');
       
       setCaptureComplete(true);
     } catch (error) {

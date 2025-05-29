@@ -59,6 +59,9 @@ const VictoryScreen: React.FC<VictoryScreenProps> = ({
   const continueToNextWave = async () => {
     if (!gameState.playerPokemon) return;
     
+    console.log('=== CONTINUE TO NEXT WAVE ===');
+    console.log('Preserving captured Pokemon:', gameState.capturedPokemon);
+    
     setLoading(true);
     try {
       const newWave = gameState.wave + 1;
@@ -68,7 +71,9 @@ const VictoryScreen: React.FC<VictoryScreenProps> = ({
         wave: newWave,
         pokeballs: gameState.pokeballs + bonusPokeballs,
         enemyPokemon: null,
-        gamePhase: 'battle'
+        gamePhase: 'battle',
+        // Explicitly preserve captured Pokemon
+        capturedPokemon: [...gameState.capturedPokemon]
       });
     } catch (error) {
       console.error('Error continuing to next wave:', error);

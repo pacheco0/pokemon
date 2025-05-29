@@ -16,8 +16,22 @@ const DefeatScreen: React.FC<DefeatScreenProps> = ({
 }) => {
   const handleCapture = () => {
     if (gameState.pokeballs > 0) {
+      console.log('=== DEFEAT SCREEN CAPTURE ===');
+      console.log('Attempting to capture from defeat screen:', gameState.lastDefeatedPokemon?.name);
       updateGameState({ gamePhase: 'capture' });
     }
+  };
+
+  const goBackHome = () => {
+    console.log('=== DEFEAT SCREEN - BACK TO HOME ===');
+    console.log('Preserving captured Pokemon:', gameState.capturedPokemon);
+    updateGameState({ 
+      gamePhase: 'home',
+      // Preserve all captured Pokemon and reset battle-specific state
+      playerPokemon: null,
+      enemyPokemon: null,
+      lastDefeatedPokemon: null
+    });
   };
 
   return (
@@ -58,25 +72,30 @@ const DefeatScreen: React.FC<DefeatScreenProps> = ({
           
           {gameState.lastDefeatedPokemon && gameState.pokeballs > 0 && (
             <div className="bg-yellow-100 border border-yellow-300 rounded-lg p-4 mb-6">
-              <h4 className="font-bold text-yellow-800 mb-2">Capture Opportunity!</h4>
+              <h4 className="font-bold text-yellow-800 mb-3 text-lg">🎯 ¡Oportunidad de Captura!</h4>
               <div className="flex items-center justify-center space-x-4 mb-4">
                 <img
                   src={gameState.lastDefeatedPokemon.sprites.other['official-artwork'].front_default || gameState.lastDefeatedPokemon.sprites.front_default}
                   alt={gameState.lastDefeatedPokemon.name}
-                  className="w-16 h-16 object-contain"
+                  className="w-20 h-20 object-contain"
                 />
-                <div>
-                  <p className="text-yellow-800 font-medium capitalize">
+                <div className="text-left">
+                  <p className="text-yellow-800 font-bold capitalize text-lg">
                     {gameState.lastDefeatedPokemon.name}
                   </p>
-                  <p className="text-yellow-700 text-sm">
-                    Level {(gameState.lastDefeatedPokemon as any).level || 5}
+                  <p className="text-yellow-700">
+                    Nivel {(gameState.lastDefeatedPokemon as any).level || 5}
+                  </p>
+                  <p className="text-yellow-600 text-sm">
+                    Tipo: {gameState.lastDefeatedPokemon.types.map(t => t.type.name).join(', ')}
                   </p>
                 </div>
               </div>
-              <p className="text-yellow-800 text-sm">
-                You can use a Pokéball to capture the last {gameState.lastDefeatedPokemon.name} you defeated!
-                It will become your new partner.
+              <p className="text-yellow-800 font-medium mb-2">
+                ¡Puedes usar una Pokéball para capturar al último {gameState.lastDefeatedPokemon.name} que derrotaste!
+              </p>
+              <p className="text-yellow-700 text-sm">
+                Se convertirá en tu nuevo compañero y aparecerá en tu Pokédex como capturado.
               </p>
             </div>
           )}
@@ -88,15 +107,22 @@ const DefeatScreen: React.FC<DefeatScreenProps> = ({
               onClick={handleCapture}
               className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:from-yellow-600 hover:to-orange-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
-              Capture {gameState.lastDefeatedPokemon.name}! ⚡
+              ⚡ ¡Capturar {gameState.lastDefeatedPokemon.name}! ⚡
             </button>
           )}
           
           <button
-            onClick={onRestart}
+            onClick={goBackHome}
             className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
           >
-            Start New Game
+            Back to Home
+          </button>
+          
+          <button
+            onClick={onRestart}
+            className="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-2 rounded-full font-bold text-sm hover:from-gray-600 hover:to-gray-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+          >
+            Start Fresh Game
           </button>
         </div>
         

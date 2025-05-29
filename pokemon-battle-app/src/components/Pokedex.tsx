@@ -25,7 +25,24 @@ const Pokedex: React.FC<PokedexProps> = ({ gameState, updateGameState, loading, 
   const [loadingProgress, setLoadingProgress] = useState({ current: 0, total: 0, region: '' });
 
   useEffect(() => {
-    loadPokedexData();
+    console.log('=== POKEDEX DEBUG ===');
+    console.log('Pokedex useEffect triggered');
+    console.log('Current captured Pokemon:', gameState.capturedPokemon);
+    console.log('Type of capturedPokemon:', typeof gameState.capturedPokemon);
+    console.log('Is array?:', Array.isArray(gameState.capturedPokemon));
+    console.log('Array length:', gameState.capturedPokemon?.length || 'undefined');
+    console.log('Current chosen starter:', gameState.chosenStarter);
+    console.log('Current pokedexEntries length:', pokedexEntries.length);
+    
+    // Only load data if we don't have any entries yet
+    if (pokedexEntries.length === 0) {
+      console.log('Loading Pokedex data for first time...');
+      loadPokedexData();
+    } else {
+      console.log('Updating capture status on existing entries...');
+      // Update existing entries instead of reloading everything
+      updateCaptureStatus();
+    }
   }, [gameState.capturedPokemon, gameState.chosenStarter]);
 
   const loadPokedexData = async () => {
@@ -121,6 +138,31 @@ const Pokedex: React.FC<PokedexProps> = ({ gameState, updateGameState, loading, 
       setLoading(false);
       setLoadingProgress({ current: 0, total: 0, region: '' });
     }
+  };
+
+  // New function to update capture status without reloading all data
+  const updateCaptureStatus = () => {
+    console.log('=== UPDATING CAPTURE STATUS ===');
+    console.log('Updating capture status for existing entries');
+    console.log('Captured Pokemon IDs:', gameState.capturedPokemon);
+    
+    const updatedEntries = pokedexEntries.map(entry => {
+      const isCaptured = gameState.capturedPokemon.includes(entry.pokemon.id);
+      const isChosen = gameState.chosenStarter === entry.pokemon.id;
+      
+      if (entry.isCaptured !== isCaptured || entry.isChosen !== isChosen) {
+        console.log(`Updating ${entry.pokemon.name} (ID: ${entry.pokemon.id}) - captured: ${isCaptured}, chosen: ${isChosen}`);
+        return {
+          ...entry,
+          isCaptured,
+          isChosen
+        };
+      }
+      return entry;
+    });
+    
+    setPokedexEntries(updatedEntries);
+    console.log('Capture status updated for all entries');
   };
 
   const getTypeColor = (type: string) => {

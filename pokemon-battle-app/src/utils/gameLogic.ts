@@ -254,14 +254,24 @@ export const checkEvolution = async (playerPokemon: PlayerPokemon): Promise<Poke
 
 export const saveGameState = (gameState: any) => {
   if (typeof window !== 'undefined') {
+    console.log('=== SAVE GAME STATE ===');
+    console.log('Saving game state with captured Pokemon:', gameState.capturedPokemon);
+    console.log('Captured Pokemon array length:', gameState.capturedPokemon?.length || 0);
+    console.log('Full game state being saved:', gameState);
     localStorage.setItem('pokemon-battle-game', JSON.stringify(gameState));
+    console.log('Game state saved to localStorage');
   }
 };
 
 export const loadGameState = (): any | null => {
   if (typeof window !== 'undefined') {
     const saved = localStorage.getItem('pokemon-battle-game');
-    return saved ? JSON.parse(saved) : null;
+    const parsed = saved ? JSON.parse(saved) : null;
+    console.log('=== LOAD GAME STATE ===');
+    console.log('Loaded game state with captured Pokemon:', parsed?.capturedPokemon);
+    console.log('Captured Pokemon array length:', parsed?.capturedPokemon?.length || 0);
+    console.log('Full loaded state:', parsed);
+    return parsed;
   }
   return null;
 };

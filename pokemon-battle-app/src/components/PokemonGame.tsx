@@ -58,7 +58,14 @@ const PokemonGame: React.FC = () => {
   }, [gameState]);
 
   const updateGameState = (updates: Partial<GameState>) => {
-    setGameState(prev => ({ ...prev, ...updates }));
+    console.log('=== UPDATE GAME STATE ===');
+    console.log('Current captured Pokemon:', gameState.capturedPokemon);
+    console.log('Updates being applied:', updates);
+    
+    const newState = { ...gameState, ...updates };
+    console.log('New captured Pokemon after update:', newState.capturedPokemon);
+    
+    setGameState(newState);
   };
 
   const resetGame = () => {
